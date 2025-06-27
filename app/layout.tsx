@@ -10,10 +10,9 @@ import Script from "next/script"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Universal Media Downloader",
+  title: "LinkLoot",
   description: "Download videos and audio from your favorite platforms",
-  keywords: "video downloader, audio downloader, YouTube, Instagram, Facebook, LinkedIn",
-  generator: 'v0.dev'
+  keywords: "video downloader, audio downloader, YouTube, Instagram, Facebook, LinkedIn"
 }
 
 export default function RootLayout({
