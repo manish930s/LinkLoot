@@ -15,7 +15,7 @@ app.post('/api/analyze', async (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: 'URL is required' });
   try {
-    const { stdout } = await execFileAsync('yt-dlp', ['--dump-json', url]);
+    const { stdout } = await execFileAsync('yt-dlp', ['--cookies', '/home/ec2-user/youtube.com_cookies.txt', '--dump-json', url]);
     const info = JSON.parse(stdout);
     res.json({ videoInfo: info });
   } catch (err) {
@@ -34,6 +34,7 @@ app.post('/api/download', async (req, res) => {
     const filename = `${sanitizedTitle}.${extension}`;
     const outputPath = path.join('/tmp', filename); // Cloud Run allows writing to /tmp
     let args = [
+      '--cookies', '/home/ec2-user/youtube.com_cookies.txt',
       url,
       '-f', format,
       '-o', outputPath,
