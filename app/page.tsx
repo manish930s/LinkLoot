@@ -171,7 +171,8 @@ export default function MediaDownloader() {
     setVideoInfo(null)
 
     try {
-      const response = await fetch("/api/analyze", {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://13.222.245.162:8080"
+      const response = await fetch(`${apiBaseUrl}/api/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
@@ -198,7 +199,8 @@ export default function MediaDownloader() {
     setIsDownloading(true)
 
     try {
-      const response = await fetch("/api/download", {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://13.222.245.162:8080"
+      const response = await fetch(`${apiBaseUrl}/api/download`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
