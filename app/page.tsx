@@ -138,19 +138,53 @@ export default function MediaDownloader() {
   ]
 
   const detectPlatform = (url: string) => {
-    for (const platform of supportedPlatforms) {
-      if (url.includes(platform.domain) || url.includes(platform.domain.replace(".com", ""))) {
-        return platform
-      }
+    const lowerUrl = url.toLowerCase()
+    
+    // Check for YouTube variations
+    if (lowerUrl.includes('youtube.com') || lowerUrl.includes('youtu.be') || lowerUrl.includes('youtube.com/shorts')) {
+      return supportedPlatforms.find(p => p.name === "YouTube")
     }
+    
+    // Check for Instagram
+    if (lowerUrl.includes('instagram.com')) {
+      return supportedPlatforms.find(p => p.name === "Instagram")
+    }
+    
+    // Check for Facebook
+    if (lowerUrl.includes('facebook.com') || lowerUrl.includes('fb.com')) {
+      return supportedPlatforms.find(p => p.name === "Facebook")
+    }
+    
+    // Check for LinkedIn
+    if (lowerUrl.includes('linkedin.com')) {
+      return supportedPlatforms.find(p => p.name === "LinkedIn")
+    }
+    
+    // Check for TikTok
+    if (lowerUrl.includes('tiktok.com')) {
+      return supportedPlatforms.find(p => p.name === "TikTok")
+    }
+    
+    // Check for Twitter/X
+    if (lowerUrl.includes('twitter.com') || lowerUrl.includes('x.com')) {
+      return supportedPlatforms.find(p => p.name === "Twitter/X")
+    }
+    
     return null
   }
 
   const validateUrl = (url: string) => {
+    console.log("validateUrl called with:", url)
     try {
-      new URL(url)
-      return detectPlatform(url) !== null
-    } catch {
+      const urlObj = new URL(url)
+      console.log("URL object created successfully:", urlObj.hostname)
+      const platform = detectPlatform(url)
+      console.log("Detected platform:", platform)
+      const result = platform !== null
+      console.log("Validation result:", result)
+      return result
+    } catch (error) {
+      console.log("URL validation error:", error)
       return false
     }
   }
@@ -160,6 +194,10 @@ export default function MediaDownloader() {
       setError("Please enter a valid URL")
       return
     }
+
+    console.log("Testing URL:", url)
+    console.log("URL validation result:", validateUrl(url))
+    console.log("Detected platform:", detectPlatform(url))
 
     if (!validateUrl(url)) {
       setError("Please enter a valid URL from a supported platform")
@@ -172,9 +210,12 @@ export default function MediaDownloader() {
 
     try {
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://13.222.245.162:8080"
+      console.log("Using API base URL:", apiBaseUrl)
+      
       const response = await fetch(`${apiBaseUrl}/api/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        mode: 'cors',
         body: JSON.stringify({ url }),
       })
 
@@ -187,6 +228,7 @@ export default function MediaDownloader() {
       setVideoInfo(data.videoInfo)
       setSelectedFormat(data.videoInfo.formats[0]?.quality || "")
     } catch (err) {
+      console.error("API Error:", err)
       setError(err instanceof Error ? err.message : "An error occurred")
     } finally {
       setIsLoading(false)
